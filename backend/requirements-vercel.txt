@@ -33,12 +33,5 @@ requests==2.31.0
 # Data Processing
 numpy==1.26.2
 pandas==2.1.4
-scipy==1.11.4
-
-# CORS & Security (CORS is built into FastAPI)
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-
-# Vercel specific
-mangum==0.17.0
+scipy==1.10.0
 

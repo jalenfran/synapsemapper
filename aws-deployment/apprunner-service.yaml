@@ -1,0 +1,9 @@
+version: 1.0
+runtime: docker
+build:
+  commands:
+    build:
+      - echo "Building Empirica full-stack application..."
+      - docker-compose -f docker-compose.yml build
+run:
+  - docker-compose -f docker-compose.yml up

@@ -58,3 +58,4 @@ uploads/
 logs/
 *.log
 
+.vercel
