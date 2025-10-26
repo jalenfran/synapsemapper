@@ -28,7 +28,15 @@ class Settings(BaseSettings):
     scispacy_model: str = "en_ner_bionlp13cg_md"
     
     # CORS
-    cors_origins: List[str] = ["http://localhost:5173", "http://localhost:3000"]
+    cors_origins: List[str] = [
+        "http://localhost:5173", 
+        "http://localhost:3000",
+        "http://107.22.82.130:5173",
+        "http://107.22.82.130:3000",
+        "https://107.22.82.130:5173",
+        "https://107.22.82.130:3000",
+        "*"  # Allow all origins for development
+    ]
     
     class Config:
         env_file = ".env"

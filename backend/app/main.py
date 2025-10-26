@@ -127,11 +127,23 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
+    allow_origins=["*"],  # Allow all origins for development
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     allow_headers=["*"],
 )
+
+# Add request logging middleware
+@app.middleware("http")
+async def log_requests(request, call_next):
+    print(f"🔍 Received request: {request.method} {request.url}")
+    print(f"📋 Headers: {dict(request.headers)}")
+    print(f"🌐 Origin: {request.headers.get('origin', 'No origin')}")
+    print(f"🔑 Authorization: {request.headers.get('authorization', 'No auth')[:50]}...")
+    
+    response = await call_next(request)
+    print(f"✅ Response: {response.status_code}")
+    return response
 
 # Initialize services
 pdf_processor = PDFProcessor()
@@ -170,6 +182,57 @@ async def root():
         "version": "1.0.0",
         "llm_enabled": settings.enable_llm_extraction,
     }
+
+@app.get("/api/health")
+async def health_check():
+    """Simple health check endpoint for testing"""
+    return {
+        "status": "healthy",
+        "message": "API is running",
+        "cors_enabled": True,
+        "timestamp": datetime.now().isoformat()
+    }
+
+@app.get("/api/test-auth")
+async def test_auth(
+    current_user: User = Depends(get_current_user)
+):
+    """Test authentication endpoint"""
+    return {
+        "status": "authenticated",
+        "user_id": current_user.id,
+        "user_name": current_user.name,
+        "user_email": current_user.email
+    }
+
+@app.get("/api/projects-test")
+async def list_projects_test(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Test projects endpoint with authentication"""
+    try:
+        projects = db.query(Project).filter(Project.user_id == current_user.id).all()
+        return {
+            "status": "success",
+            "projects": [
+                {
+                    "id": p.id,
+                    "name": p.name,
+                    "description": p.description,
+                    "created_at": p.created_at.isoformat()
+                }
+                for p in projects
+            ],
+            "count": len(projects)
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e),
+            "projects": [],
+            "count": 0
+        }
 
 
 @app.post("/api/process", response_model=ProcessingStatus)
