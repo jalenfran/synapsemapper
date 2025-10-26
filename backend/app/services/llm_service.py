@@ -19,11 +19,11 @@ class LLMService:
     
     def __init__(self):
         
-        # Use Anthropic API directly
-        anthropic_key = "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"
+        # Use Anthropic API directly from environment variable
+        anthropic_key = settings.ANTHROPIC_API_KEY
         self.anthropic_client = None
         
-        if ANTHROPIC_AVAILABLE:
+        if ANTHROPIC_AVAILABLE and anthropic_key:
             try:
                 self.anthropic_client = anthropic.Anthropic(api_key=anthropic_key)
                 self.enabled = True
@@ -32,7 +32,7 @@ class LLMService:
                 print(f"⚠️  Failed to initialize Anthropic client: {e}")
                 self.enabled = False
         else:
-            print("⚠️  Anthropic library not available")
+            print("⚠️  Anthropic library not available or API key missing")
             self.enabled = False
     
     async def extract_relationships_from_sentence(
