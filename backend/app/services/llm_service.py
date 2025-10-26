@@ -20,14 +20,17 @@ class LLMService:
     def __init__(self):
         
         # Use Anthropic API directly from environment variable
-        anthropic_key = settings.ANTHROPIC_API_KEY
+        anthropic_key = settings.anthropic_api_key
         self.anthropic_client = None
+        
+        if not anthropic_key:
+            print("⚠️  ANTHROPIC_API_KEY not set in environment")
         
         if ANTHROPIC_AVAILABLE and anthropic_key:
             try:
                 self.anthropic_client = anthropic.Anthropic(api_key=anthropic_key)
                 self.enabled = True
-                print("✅ LLM service enabled with direct Anthropic API")
+                print(f"✅ LLM service enabled with direct Anthropic API (key: {anthropic_key[:10]}...)")
             except Exception as e:
                 print(f"⚠️  Failed to initialize Anthropic client: {e}")
                 self.enabled = False

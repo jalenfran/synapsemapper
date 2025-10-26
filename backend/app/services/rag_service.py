@@ -279,11 +279,26 @@ RELEVANT TEXT EXCERPTS:
                     prompt += f"- {rel['source']} {rel['type']} {rel['target']} (confidence: {rel['weight']:.2f})\n"
             
             prompt += f"\nRELEVANT ENTITIES: {', '.join(entities[:10])}\n"
+            
+            # Add source information
+            doc_sources = set()
+            for chunk in chunks:
+                doc_id = chunk.get("doc_id", "unknown")
+                if doc_id != "unknown":
+                    doc_sources.add(doc_id)
+            
+            if doc_sources:
+                prompt += f"\nSOURCES CONSULTED: {len(doc_sources)} research papers\n"
+            
             prompt += "\nINSTRUCTIONS:\n"
-            prompt += "1. Answer the question based on the provided context\n"
-            prompt += "2. Cite specific excerpts when making claims\n"
-            prompt += "3. If the context doesn't contain enough information, say so\n"
-            prompt += "4. Be specific and scientific in your response\n"
+            prompt += "1. Start by briefly mentioning what sources you're using\n"
+            prompt += "2. Explore any direct or indirect connections you can find in the context\n"
+            prompt += "3. Discuss relevant patterns, co-occurrences, and relationships from the knowledge graph\n"
+            prompt += "4. If entities share connections through intermediary entities, explain those pathways\n"
+            prompt += "5. Draw insights from related contexts even if not directly about the query\n"
+            prompt += "6. Cite specific excerpts and graph relationships when making observations\n"
+            prompt += "7. Be analytical and exploratory - discuss what the available evidence suggests\n"
+            prompt += "8. Acknowledge limitations but maximize insight from what you have\n"
             prompt += "\nANSWER:"
             
         elif task_type == "hypothesis":

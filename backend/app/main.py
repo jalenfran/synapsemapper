@@ -1096,6 +1096,9 @@ async def chat_with_graph(
                 # Use the RAG-enhanced prompt directly with LLM
                 llm_response = await llm_service.chat([{"role": "user", "content": rag_prompt}])
                 
+                if not llm_response:
+                    raise Exception("LLM returned empty response - check API key configuration")
+                
                 print(f"💬 LLM Response preview (first 300 chars):\n{llm_response[:300]}...")
                 
                 # Create result in expected format

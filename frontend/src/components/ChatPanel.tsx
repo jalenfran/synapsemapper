@@ -448,11 +448,11 @@ export const ChatPanel = () => {
                                 <div className="h-1 flex-1 bg-gray-700 rounded-full overflow-hidden">
                                   <div 
                                     className="h-full bg-blue-500 rounded-full transition-all"
-                                    style={{ width: `${Math.min(citation.relevance_score * 100, 100)}%` }}
+                                    style={{ width: `${Math.min(citation.relevance_score <= 1 ? citation.relevance_score * 100 : (citation.relevance_score / 5) * 100, 100)}%` }}
                                   ></div>
                                 </div>
                                 <span className="text-xs text-gray-500">
-                                  {Math.round(citation.relevance_score * 100)}%
+                                  {citation.relevance_score <= 1 ? Math.round(citation.relevance_score * 100) + '%' : citation.relevance_score.toFixed(1) + ' matches'}
                                 </span>
                               </div>
                             )}
